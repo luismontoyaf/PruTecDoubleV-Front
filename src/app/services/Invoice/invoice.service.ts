@@ -14,4 +14,8 @@ export class InvoiceService {
     saveInvoice(invoiceRequest: any): Observable<any> {
       return this.http.post<any>(this.apiUrl+"/saveInvoice", invoiceRequest); 
     }
+
+    searchInvoice(searchParams: { Client: string; NumeroFactura: string }): Observable<any[]> {
+      return this.http.post<any[]>(`${this.apiUrl}/searchInvoice`, searchParams);
+    }
 }

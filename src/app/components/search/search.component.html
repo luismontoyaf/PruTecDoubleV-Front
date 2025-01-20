@@ -1,0 +1,68 @@
+<div class="search-container">
+    <h3>Tipo de Busqueda</h3>
+    <form [formGroup]="searchForm" (ngSubmit)="buscar()">
+      <div class="search-options">
+        <label>
+          <input
+            type="radio"
+            formControlName="searchType"
+            value="cliente"
+            name="searchType"
+          />
+          Cliente
+        </label>
+        <label>
+          <input
+            type="radio"
+            formControlName="searchType"
+            value="numeroFactura"
+            name="searchType"
+          />
+          Número Factura
+        </label>
+      </div>
+  
+      <div class="search-form">
+        <div class="form-group">
+          <label>Cliente:</label>
+          <select
+            formControlName="cliente"
+            [attr.disabled]="searchForm.get('searchType')?.value !== 'cliente' ? true : null"
+          >
+            <option *ngFor="let client of clients" [value]="client.razonSocial">
+              {{ client.razonSocial }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Número de Factura:</label>
+          <input
+            formControlName="numeroFactura"
+            type="text"
+            placeholder="Ingrese número"
+            [attr.disabled]="searchForm.get('searchType')?.value !== 'numeroFactura' ? true : null"
+          />
+        </div>
+        <button type="submit">Buscar</button>
+      </div>
+    </form>
+  
+    <table>
+      <thead>
+        <tr>
+          <th>Número de factura</th>
+          <th>Fecha Emisión</th>
+          <th>Total facturado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let factura of facturas">
+          <td>{{ factura.numeroFactura }}</td>
+          <td>{{ factura.fechaEmisionFactura | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ factura.totalFactura | currency }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>{{ message }}</p>
+  </div>
+  

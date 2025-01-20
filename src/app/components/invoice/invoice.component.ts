@@ -43,6 +43,8 @@ export class InvoiceComponent {
   taxRate = 0.19; 
   subtotal = 0;
   total = 0;
+  message = "";
+  errorMessage = "";
 
   constructor(private clientService: ClientService, private producService: ProductsService, private invoiceService: InvoiceService) {}
 
@@ -70,7 +72,7 @@ export class InvoiceComponent {
     const productGroup = new FormGroup({
       productName: new FormControl('', Validators.required),
       unitPrice: new FormControl(0, Validators.required),
-      quantity: new FormControl(0, Validators.required),
+      quantity: new FormControl(0, [Validators.required, Validators.min(1)]),
       total: new FormControl(0),
       image: new FormControl(null), 
     });
@@ -106,6 +108,11 @@ export class InvoiceComponent {
 
   // Guardar la factura
   saveInvoice() {
+
+    if (this.productsArray.length == 0) {
+      this.errorMessage = "Debes agregar al menos un producto";
+      return;
+    }
     const invoice = this.invoiceForm.value;
   
     // Crear el objeto de la solicitud
@@ -130,16 +137,16 @@ export class InvoiceComponent {
   
     // Llamar al servicio para guardar la factura
     this.invoiceService.saveInvoice(invoiceRequest).subscribe(response => {
-      console.log('Factura guardada:', response);
-      alert('Factura guardada correctamente');
+      this.message = response.message;
+      this.errorMessage = "";
     }, error => {
       console.error('Error al guardar la factura:', error);
-      alert('Error al guardar la factura');
+      this.errorMessage = "Error al guardar la factura, verifica los datos. Los Numeros de Factura deben ser unicos";
+      this.message = "";
     });
   }
 
   resetForm() {
-    // Reseteamos el formulario
     this.invoiceForm.reset();
 
     // Vaciar el FormArray si hay productos añadidos
@@ -147,7 +154,6 @@ export class InvoiceComponent {
       this.productsArray.removeAt(0);
     }
 
-    // Reiniciamos los valores de los totales
     this.subtotal = 0;
     this.total = 0;
   }

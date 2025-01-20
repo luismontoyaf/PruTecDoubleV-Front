@@ -48,6 +48,9 @@
             </td>
             <td>
               <input formControlName="quantity" type="number" (input)="calculateTotals()" />
+              <div *ngIf="productFormGroup.get('quantity')?.hasError('min')">
+                La cantidad debe ser mayor que cero.
+              </div>
             </td>
             <td>
               <img [src]="productFormGroup.get('image')?.value" alt="Imagen" width="50" />
@@ -64,7 +67,11 @@
         <p>Total: {{ total | currency }}</p>
       </div>
   
-      <!-- Botón guardar -->
-      <button type="submit">Guardar</button>
+      <div>
+        <button type="submit">Guardar</button>
+        <a href="/search">Buscar Facturas</a>
+      </div>
     </form>
+    <p class="doneInvoice">{{ message }}</p>
+    <p class="errorInvoice">{{ errorMessage }}</p>
   </div>
