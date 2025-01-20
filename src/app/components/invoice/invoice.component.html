@@ -1,0 +1,70 @@
+<div class="invoice-form">
+    <!-- Título y botón alineados -->
+    <div class="header">
+      <h2>Nueva factura</h2>
+      <button type="button" class="new-btn" (click)="resetForm()">Nuevo</button>
+    </div>
+  
+    <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice()">
+      <!-- Encabezado con campos reorganizados -->
+      <div class="form-header">
+        <div class="form-group">
+          <label>Cliente:</label>
+          <input formControlName="client" placeholder="Selecciona un cliente" list="clients" />
+          <datalist id="clients">
+            <option *ngFor="let client of clients" [value]="client.razonSocial"></option>
+          </datalist>
+        </div>
+  
+        <div class="form-group">
+          <label>Número de Factura:</label>
+          <input formControlName="invoiceNumber" type="text" placeholder="Número de factura" />
+        </div>
+      </div>
+  
+      <!-- Botón para agregar producto -->
+      <button type="button" class="add-product-btn" (click)="addProduct()">Agregar producto</button>
+  
+      <!-- Tabla de productos -->
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio Unitario</th>
+            <th>Cantidad</th>
+            <th>Imagen</th>
+            <th>Totales</th>
+          </tr>
+        </thead>
+        <tbody formArrayName="products">
+          <tr *ngFor="let productFormGroup of productsArray.controls; let i = index" [formGroupName]="i">
+            <td>
+              <select formControlName="productName" (change)="onProductChange($event, i)">
+                <option *ngFor="let product of products" [value]="product.nombreProducto">{{ product.nombreProducto }}</option>
+              </select>
+            </td>
+            <td>
+              <input formControlName="unitPrice" type="number" (input)="calculateTotals()" readonly/>
+            </td>
+            <td>
+              <input formControlName="quantity" type="number" (input)="calculateTotals()" />
+            </td>
+            <td>
+              <img [src]="productFormGroup.get('image')?.value" alt="Imagen" width="50" />
+            </td>
+            <td>{{ productFormGroup.get('total')?.value | currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <!-- Resumen -->
+      <div class="summary">
+        <p>Sub total: {{ subtotal | currency }}</p>
+        <p>Impuestos ({{ taxRate * 100 }}%): {{ (subtotal * taxRate) | currency }}</p>
+        <p>Total: {{ total | currency }}</p>
+      </div>
+  
+      <!-- Botón guardar -->
+      <button type="submit">Guardar</button>
+    </form>
+  </div>
